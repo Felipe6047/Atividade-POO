@@ -5,47 +5,51 @@ class Tarefa {
     this.concluida = concluida;
     this.dataCriacao = new Date();
   }
+
   toHTML() {
     return `
         <li>
-            <input type="checkbox" class="${this.concluida ? "concluida" : ""}">
-            <span>${this.descricao}</span>
+            <input type="checkbox" class="tarefa ${this.concluida ? 'concluida' : ''}">
+            <span>${this.descricao}</span>      
         </li>
-        `;
+    `
   }
 }
 
 class GerenciarTarefas {
   constructor() {
     this.tarefas = [];
-    this.proximoId = 0;
+    this.proximoId = 1;
     this.container = document.getElementById("lista-tarefas");
     this.init();
   }
   init() {
-    this.carregarLocalstorage();
+    this.carregarLocalStorage();
     this.renderizar();
     this.configurarEventos();
   }
+
   salvarNoLocalStorage() {
     const dados = {
       tarefas: this.tarefas,
       proximoId: this.proximoId,
     };
-    localStorage.setItem("poo", JSON.stringify(dados));
-  } 
-  carregarLocalstorage() {
-    const dados = JSON.parse(localStorage.getItem("todoAppSempo"));
-    if (dados) {
-      this.tarefas = dados.tarefas.map(tarefa => {
-        return new Tarefa(tarefa.id, tarefa.descricao);
-      });
-      this.proximoId = dados.proximoId
-    }
-
+    localStorage.setItem("todoAppSemPOO", JSON.stringify(dados));
   }
+
+  carregarLocalStorage() {
+    const dados = JSON.parse(localStorage.getItem("todoAppSemPOO"));
+        if(dados){
+            this.tarefas = dados.tarefas.map(tarefa => {
+                console.log(tarefa, "666");
+                new Tarefa(tarefa.id, tarefa.descricao);
+            });
+            this.proximoId = dados.proximoId;
+        }
+  }
+
   renderizar() {
-    this.container.innerHTML = "";
+    this.container.innerHTML = '';
     this.tarefas.forEach((tarefa) => {
       this.container.innerHTML += tarefa.toHTML();
     });
@@ -63,12 +67,10 @@ class GerenciarTarefas {
     this.salvarNoLocalStorage();
     this.renderizar();
   }
-  configurarEventos() {
-    document.getElementById("btn-adicionar").addEventListener("click", () => {
-      const input = document.getElementById("nova-tarefa");
-      this.adicionarElemento(input.value.trim());
-    });
-  }
-}
 
-const app = new GerenciarTarefas();
+  configurarEventos() {
+    document.getElementById("btn-adicionar").addEventListener('click', (e) => {
+        const input = document.getElementById("nova-tarefa");
+        this.adicionarElemento(input.value.trim());
+    })
+  }
